@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Gruppo } from 'next/font/google'
-
-const gruppo = Gruppo({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-gruppo',
-})
+import { fonts } from "@/lib/fonts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased ${gruppo.className}`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${fonts.gruppo.className} ${fonts.averia_libre.className}`}
       >
         {children}
       </body>
