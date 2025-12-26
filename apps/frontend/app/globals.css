@@ -2,8 +2,7 @@
 
 :root {
   --foreground: #ffffff;
-  --background: #171717;
-  --font-geist-sans:
+  --background: #020202;
 }
 
 body {
@@ -17,4 +16,8 @@ body {
 
 .averia_libre {
   font-family: var(--font-averia_libre);
+}
+
+.bungee_hairline{
+  font-family: var(--font-bungee_hairline);
 }

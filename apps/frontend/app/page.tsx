@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div>
+    <div className="mt-10">
       <Appbar />
       <Hero />
     </div>
