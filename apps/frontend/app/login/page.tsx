@@ -3,12 +3,11 @@
 import { Appbar } from "@/components/Appbar"
 import { fonts } from "@/lib/fonts"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { BACKEND_URL } from "../config"
-import { useRouter } from "next/navigation"
 
-export default function Signup() {
-    const [name, setName] = useState('')
+export default function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -34,17 +33,9 @@ export default function Signup() {
                     shadow-2xl p-6">
 
                         <h2 className="text-black text-xl font-semibold text-center mb-4">
-                            Sign Up
+                            Login
                         </h2>
 
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            className="w-full mb-3 px-4 py-2 rounded-lg 
-                        bg-white/20 text-black placeholder-black 
-                        border border-black focus:outline-none"
-                            onChange={e => { setName(e.target.value) }}
-                        />
 
                         <input
                             type="email"
@@ -64,15 +55,15 @@ export default function Signup() {
                             onChange={e => { setPassword(e.target.value) }}
                         />
 
-                        <button className="w-full bg-white text-black rounded-xl py-2 font-medium" onClick={ async() => {
-                            const res = await axios.post(`${BACKEND_URL}/fluxo/api/v1/user/auth/signup`, {
+                        <button className="w-full bg-white text-black rounded-xl py-2 font-medium" onClick={async () => {
+                            const res = await axios.post(`${BACKEND_URL}/fluxo/api/v1/user/auth/signin`, {
                                 username: email,
                                 password,
-                                name
                             });
-                            router.push("/login")
+                            localStorage.setItem("token",res.data.token);
+                            router.push("/dashboard")
                         }}>
-                            Create Account
+                            Login
                         </button>
                     </div>
                 </div>
