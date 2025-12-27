@@ -8,7 +8,7 @@ export function Appbar() {
     return (
         <div className="flex justify-between m-5">
 
-            <div className={`${fonts.gruppo.className} text-4xl ml-5`}>
+            <div className={`${fonts.gruppo.className} cursor-pointer text-4xl ml-5`} onClick={() => {router.push("/")}}>
                 Fluxo
             </div>
 
