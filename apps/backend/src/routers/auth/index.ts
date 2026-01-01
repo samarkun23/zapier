@@ -1,11 +1,12 @@
 
-import { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response, type Router as ExpressRouter } from "express";
 import { signInSchema, signUpSchema } from "../../types/index.js";
-import { prisma } from '@repo/db/client'
+import { prismaClient } from '@repo/db/client'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { JWT_SECRET } from "../../config.js";
-const router = Router();
+
+const router : ExpressRouter = Router();
 
 router.post("/signup", async (req: Request, res: Response) => {
     const body = req.body;
@@ -21,7 +22,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     }
 
     console.log("Reached at db");
-    const isUserExist = await prisma.user.findFirst({
+    const isUserExist = await prismaClient.user.findFirst({
         where: {
             email: parsed.data.email
         }
@@ -37,7 +38,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     try {
         const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
         console.log("hashedPassword")
-        await prisma.user.create({
+        await prismaClient.user.create({
             data: {
                 name: parsed.data.name,
                 email: parsed.data.email,
@@ -69,7 +70,7 @@ router.post("/signin", async (req: Request, res: Response) => {
             })
         }
 
-        const user = await prisma.user.findFirst({
+        const user = await prismaClient.user.findFirst({
             where: {
                 email: parsedData.data.email
             }
@@ -113,4 +114,4 @@ router.post("/signin", async (req: Request, res: Response) => {
 })
 
 
-export const authRouter = router;
+export const authRouter: ExpressRouter = router;

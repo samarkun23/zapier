@@ -1,7 +1,7 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response, type Router as ExpressRouter } from "express";
 import { authMiddleware } from "../../middleware/auth.js";
 import { zapCreateSchema } from "../../types/index.js";
-import { prisma } from "@repo/db";
+import { prismaClient } from "@repo/db/client";
 
 const router = Router();
 
@@ -20,8 +20,8 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 
     const data = parsedData.data;
 
-    const zapId = await prisma.$transaction(async tx => {
-        const zap = await prisma.zap.create({
+    const zapId = await prismaClient.$transaction(async tx => {
+        const zap = await prismaClient.zap.create({
             data: {
                 userId: parseInt(id),
                 triggerId: "",
@@ -35,7 +35,7 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
         })
 
 
-        const trigger = await prisma.trigger.create({
+        const trigger = await prismaClient.trigger.create({
             data: {
                 triggerId: parsedData.data.availableTriggerId,
                 zapId: zap.id
@@ -62,7 +62,7 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 router.get("/", authMiddleware, async (req: Request, res: Response) => {
     //@ts-ignore
     const id = req.id;
-    const zaps = await prisma.zap.findMany({
+    const zaps = await prismaClient.zap.findMany({
         where: {
             userId: id
         },
@@ -89,7 +89,7 @@ router.get("/:zapId", authMiddleware, async (req: Request, res: Response) => {
     const id = req.id;
     const zapId = req.params.zapId
 
-    const zap = await prisma.zap.findFirst({
+    const zap = await prismaClient.zap.findFirst({
         where: {
             id: zapId,
             userId: id
@@ -113,4 +113,4 @@ router.get("/:zapId", authMiddleware, async (req: Request, res: Response) => {
     })
 })
 
-export const zapRouter = router
+export const zapRouter: ExpressRouter = router

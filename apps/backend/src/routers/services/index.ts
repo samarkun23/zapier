@@ -1,6 +1,6 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response, type Router as ExpressRouter } from "express";
 import { authMiddleware } from "../../middleware/auth.js";
-import { prisma } from "@repo/db/client";
+import { prismaClient } from "@repo/db/client";
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
         //@ts-ignore
         const id = req.id;
 
-        const user = await prisma.user.findFirst({
+        const user = await prismaClient.user.findFirst({
             where: {
                 id
             },
@@ -30,4 +30,4 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     }
 })
 
-export const serviceRouter = router; 
+export const serviceRouter: ExpressRouter = router; 
