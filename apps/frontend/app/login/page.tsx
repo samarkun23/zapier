@@ -55,9 +55,10 @@ export default function Login() {
                             onChange={e => { setPassword(e.target.value) }}
                         />
 
-                        <button className="w-full bg-white text-black rounded-xl py-2 font-medium" onClick={async () => {
+                        <button className="w-full bg-white text-black rounded-xl py-2 font-medium" onClick={async() => {
+                            console.log(email, password)
                             const res = await axios.post(`${BACKEND_URL}/fluxo/api/v1/user/auth/signin`, {
-                                username: email,
+                                email: email,
                                 password,
                             });
                             localStorage.setItem("token",res.data.token);

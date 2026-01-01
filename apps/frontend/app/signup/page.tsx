@@ -66,7 +66,7 @@ export default function Signup() {
 
                         <button className="w-full bg-white text-black rounded-xl py-2 font-medium" onClick={ async() => {
                             const res = await axios.post(`${BACKEND_URL}/fluxo/api/v1/user/auth/signup`, {
-                                username: email,
+                                email: email,
                                 password,
                                 name
                             });
