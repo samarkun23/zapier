@@ -10,7 +10,6 @@ app.use(cors())
 
 app.use(express.json());
 
-app.get("/", (req, res) => { res.send("OK") })
 
 app.use("/fluxo/api/v1", mainRouter);
 
