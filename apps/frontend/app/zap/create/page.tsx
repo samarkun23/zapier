@@ -3,8 +3,9 @@ import { Appbar } from "@/components/Appbar";
 import { fonts } from "@/lib/fonts";
 import '@xyflow/react/dist/style.css'
 import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyflow/react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useState } from "react";
+import { Model } from "@/components/Model";
 
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Trigger' }, style: { background: "#0000", color: "ffff", border: '1px solid #ffff', borderRadius: 5 } },
@@ -17,6 +18,7 @@ export default function () {
     const [edges, setEdges] = useState(initialEdges);
     const [selectTrigger, setSelectedTrigger] = useState('');
     const [selectActions, setSelectedActions] = useState([]);
+    const [selectedModelIndex, setSelectedModelIndex] = useState<number | null>(null);
 
     const onNodesChange = useCallback(
         (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -64,6 +66,19 @@ export default function () {
     };
 
 
+    const onBoxClick = (_: any, node: any) => {
+        const index = nodes.findIndex(n => n.id === node.id);
+        setSelectedModelIndex(index);
+    }
+    // useEffect(() => {
+    //     console.log("Selected model index:", selectedModelIndex);
+    // }, [selectedModelIndex]);
+
+    const closeModel = () => {
+        setSelectedModelIndex(null);
+    };
+
+
     return <div className={`${fonts.averia_libre.className} h-screen flex flex-col`}>
         <Appbar />
         <div className="flex-1">
@@ -74,6 +89,7 @@ export default function () {
                 // onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 fitView
+                onNodeClick={onBoxClick}
             >
                 <Background />
                 <div
@@ -83,5 +99,6 @@ export default function () {
 
             </ReactFlow>
         </div>
+        {selectedModelIndex !== null && <Model index={selectedModelIndex} onClose={closeModel} />}
     </div>
 }
