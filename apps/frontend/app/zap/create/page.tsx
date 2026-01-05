@@ -6,6 +6,8 @@ import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ReactFlow } fr
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { Model } from "@/components/Model";
+import axios from "axios";
+import { BACKEND_URL } from "@/app/config";
 
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Trigger' }, style: { background: "#0000", color: "ffff", border: '1px solid #ffff', borderRadius: 5 } },
@@ -13,12 +15,29 @@ const initialNodes = [
 
 const initialEdges = [{ id: 'n1-n2', source: 'n1', target: 'n2' }];
 
+function useAvailableActionsAndTriggers() {
+    const [availableActions, setAvailableActions] = useState([]);
+    const [availableTriggers, setAvailableTriggers] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/fluxo/api/v1/trigger/available`)
+            .then(x => setAvailableTriggers(x.data.availableTriggers))
+
+        axios.get(`${BACKEND_URL}/fluxo/api/v1/action/available`)
+            .then(x => setAvailableActions(x.data.availableActions))
+    }, [])
+
+    return { availableActions, availableTriggers }
+}
+
 export default function () {
+    const { availableActions, availableTriggers } = useAvailableActionsAndTriggers();
     const [nodes, setNodes] = useState(initialNodes);
     const [edges, setEdges] = useState(initialEdges);
-    const [selectTrigger, setSelectedTrigger] = useState('');
-    const [selectActions, setSelectedActions] = useState([]);
+    const [selectTrigger, setSelectedTrigger] = useState<{ id: string, name: string } | null>(null);
+    const [selectActions, setSelectedActions] = useState<{ availableactionsId: string, availableTriggersName: string | undefined }[]>([]);
     const [selectedModelIndex, setSelectedModelIndex] = useState<number | null>(null);
+    const [selectedNodeId , setSelectedNodeId] = useState<string | null>(null);
 
     const onNodesChange = useCallback(
         (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -67,6 +86,7 @@ export default function () {
 
 
     const onBoxClick = (_: any, node: any) => {
+        setSelectedNodeId(node.id);
         const index = nodes.findIndex(n => n.id === node.id);
         setSelectedModelIndex(index);
     }
@@ -99,6 +119,38 @@ export default function () {
 
             </ReactFlow>
         </div>
-        {selectedModelIndex !== null && <Model index={selectedModelIndex} onClose={closeModel} />}
+
+        {selectedModelIndex !== null && <div> <Model onSelect={(props: null | { name: string, id: string }) => {
+            if (props === null) {
+                setSelectedModelIndex(null);
+                return;
+            } else if (selectedModelIndex === 0) {
+                setSelectedTrigger({
+                    id: props.id,
+                    name: props.name
+                })
+
+                setNodes((nds) =>
+                    nds.map(node => 
+                        node.id === selectedNodeId
+                            ? {
+                                ...node,
+                                data: {label: props.name}
+                            } 
+                            :
+                            node
+                    )
+                );
+            } else {
+                setSelectedActions(a => {
+                    let newActions = [...a];
+                    newActions[selectedModelIndex - 1] = {
+                        availableactionsId: props.id,
+                        availableTriggersName: selectTrigger?.name
+                    }
+                    return newActions;
+                })
+            }
+        }} availableItems={selectedModelIndex === 0 ? availableTriggers : availableActions} index={selectedModelIndex} onClose={closeModel} /> </div>}
     </div>
 }
