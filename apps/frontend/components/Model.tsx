@@ -23,7 +23,7 @@ export function Model({ index, onClose, onSelect,  availableItems }: { index: nu
                                     {availableItems.map(({ id, name, image }) => {
                                         return <div onClick={() => {
                                             onSelect({id,name})
-                                        }} className="flex border items-center gap-x-2 px-2 border-white/40 mt-5 min-h-10 rounded-md hover:bg-gray-700 cursor-pointer" key={Math.random()}>
+                                        }} className="flex border items-center gap-x-2 px-2 border-white/40 mt-5 min-h-10 rounded-md hover:bg-gray-700 cursor-pointer" key={id}>
                                             <img src={image} width={30} />
                                             <div>
                                                 {name}

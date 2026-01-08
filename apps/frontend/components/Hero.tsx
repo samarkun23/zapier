@@ -1,6 +1,9 @@
+"use client"
 import { fonts } from "@/lib/fonts"
+import { useRouter } from "next/navigation";
 
-export function Hero() {
+export function Hero() { 
+    const router = useRouter();
     return (
         <div>
             <div className="flex justify-center">
@@ -26,7 +29,9 @@ export function Hero() {
             <div className={`${fonts.averia_libre.className} flex justify-center text-xl mt-14 `}>
                 <div className="relative inline-block">
                     <div className="absolute -inset-[1px] bg-white blur-lg rounded-xl"></div>
-                    <button className="bg-white text-black rounded-3xl p-2 relative border-gray-500 border-2">Req for Demo</button>
+                    <button className="bg-white text-black rounded-3xl p-2 relative border-gray-500 border-2" onClick={() => {
+                        router.push("/dashboard");
+                    }}>Req for Demo</button>
                 </div>
             </div>
         </div>
