@@ -9,9 +9,9 @@ export const buttonVarients = cva(
     {
         variants: {
             variant: {
-                primary: "bg-blue-600 text-white hover:bg-blue-700 rounded-md",
+                primary: "bg-blue-600 text-white hover:bg-blue-700 rounded-md px-10",
                 secondary: "relative px-6 py-3 text-black bg-white border-1 rounded-md border-black rounded-md cursor-pointer shadow-[0_0_10px_2px_rgba(255,255,255,255)]",
-                secondaryBlack: "bg-black text-white rounded-md",
+                secondaryBlack: "bg-white/20 hover:bg-white/30 px-16 text-white rounded-md",
                 nav: "bg-none text-white border-none transition duration-300 hover:text-white/70 rounded-md",
                 darkButton: "bg-none border border-green-300 rounded-2xl"
             },

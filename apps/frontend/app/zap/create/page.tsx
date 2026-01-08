@@ -8,6 +8,8 @@ import { useState } from "react";
 import { Model } from "@/components/Model";
 import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
+import { Button } from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Trigger' }, style: { background: "#0000", color: "ffff", border: '1px solid #ffff', borderRadius: 5 } },
@@ -31,13 +33,14 @@ function useAvailableActionsAndTriggers() {
 }
 
 export default function () {
+    const router = useRouter();
     const { availableActions, availableTriggers } = useAvailableActionsAndTriggers();
     const [nodes, setNodes] = useState(initialNodes);
     const [edges, setEdges] = useState(initialEdges);
     const [selectTrigger, setSelectedTrigger] = useState<{ id: string, name: string } | null>(null);
-    const [selectActions, setSelectedActions] = useState<{ availableactionsId: string, availableTriggersName: string | undefined }[]>([]);
+    const [selectActions, setSelectedActions] = useState<{ availableactionId: string, availableTriggersName: string | undefined }[]>([]);
     const [selectedModelIndex, setSelectedModelIndex] = useState<number | null>(null);
-    const [selectedNodeId , setSelectedNodeId] = useState<string | null>(null);
+    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
     const onNodesChange = useCallback(
         (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -98,6 +101,10 @@ export default function () {
         setSelectedModelIndex(null);
     };
 
+    const publish = () => {
+
+    }
+
 
     return <div className={`${fonts.averia_libre.className} h-screen flex flex-col`}>
         <Appbar />
@@ -112,10 +119,38 @@ export default function () {
                 onNodeClick={onBoxClick}
             >
                 <Background />
-                <div
-                    onClick={addNode}
-                    className="absolute z-10 m-4 bg-white text-black px-3 py-1 rounded cursor-pointer"
-                >+ Node</div>
+                <div className="gap-10">
+                    <div
+                        onClick={addNode}
+                        className="absolute hover:bg-gray-300 z-10 m-4 bg-white text-black px-3 py-1 rounded cursor-pointer"
+                    >+ Node</div>
+
+                    {/* <button
+                        onClick={publish}
+                        className=" z-10 m-4 bg-white text-black px-3 py-1 rounded cursor-pointer fixed right-4"
+                    >Publish</button> */}
+                    <Button onClick={async () => {
+                        // TODO: HERE WE NEED TO POST THE REQ 
+                        if (selectTrigger === null) return;
+                        if (!selectTrigger.id) return;
+
+                        const response = await axios.post(`${BACKEND_URL}/fluxo/api/v1/zap`, {
+                            "availableTriggerId": selectTrigger?.id,
+                            "triggerMetadata": {},
+                            "actions": selectActions.map(actions => ({
+                                availableactionId: actions.availableactionId,
+                                actionMetadata: {}
+                            }))
+                        }, {
+                            headers: {
+                                Authorization: localStorage.getItem("token")
+                            }
+                        })
+
+                        router.push("/dashboard");
+
+                    }} children="Publish" variant="darkButton" className={`text-white/90 border-2 backdrop-blur-sm z-10  hover:bg-green-200/20 right-4 fixed m-4`} />
+                </div>
 
             </ReactFlow>
         </div>
@@ -131,12 +166,12 @@ export default function () {
                 })
 
                 setNodes((nds) =>
-                    nds.map(node => 
+                    nds.map(node =>
                         node.id === selectedNodeId
                             ? {
                                 ...node,
-                                data: {label: props.name}
-                            } 
+                                data: { label: props.name }
+                            }
                             :
                             node
                     )
@@ -146,12 +181,12 @@ export default function () {
                 setSelectedActions(a => {
                     let newActions = [...a];
                     newActions[selectedModelIndex - 1] = {
-                        availableactionsId: props.id,
+                        availableactionId: props.id,
                         availableTriggersName: selectTrigger?.name
                     }
                     return newActions;
                 })
-                setNodes((nds) => nds.map(node => node.id === selectedNodeId ? {...node, data: {label: props.name}} :node))
+                setNodes((nds) => nds.map(node => node.id === selectedNodeId ? { ...node, data: { label: props.name } } : node))
                 closeModel()
             }
         }} availableItems={selectedModelIndex === 0 ? availableTriggers : availableActions} index={selectedModelIndex} onClose={closeModel} /> </div>}

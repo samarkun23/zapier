@@ -79,16 +79,17 @@ export default function () {
 function ZapTable({ zaps }: { zaps: Zap[] }) {
     const router = useRouter();
 
-    return <div className={`${fonts.averia_libre.className} p-10 max-w-screen-lg w-full`}>
-        <div className="flex ">
-            <div className="flex-1">Name</div>
-            <div className="flex-1">Running</div>
-            <div className="flex-1">Go</div>
+    return <div className={`${fonts.averia_libre.className} pt-10 max-w-screen-lg w-full`}>
+        <div className="flex">
+            <div className="flex-1 mx-10">Name</div>
+            <div className="flex-1 mx-5">ID</div>
+            <div className="flex-1 mx-10">Created At</div>
+            <div className="flex-1 mx-10">Go</div>
         </div>
-        {zaps.map(z => <div className="flex border-b border-t py-4 border-white/20">
+        {zaps.map(z => <div className="flex gap-16 mx-5 border-b border-t py-4 border-white/20 " key={Math.random()}>
             <div> {z.trigger.type.name} {z.actions.map(x => x.type.name + " ")}</div>
             <div className="flex-1">{z.id}</div>
-            <div className="flex-1">Nov 13, 2023</div>
+            <div className="flex-1 ">Nov 13, 2023</div>
             <div className="flex-1"><Button variant="secondaryBlack" onClick={() => {
                 router.push("/zap/" + z.id)
             }}>Go</Button></div>
